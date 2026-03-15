@@ -77,11 +77,11 @@ export default function Projects() {
       <div ref={ref} className="max-w-6xl mx-auto px-8 lg:px-16">
         <div className={`mb-12 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="flex items-center gap-4 mb-4">
-            <div className="sys-label text-[#F6C90E]/50">SECTION::03</div>
+            <div className="sys-label text-[#F6C90E]/50">SECTION::03 /////</div>
             <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
           </div>
           <h2 className="font-display font-black text-[clamp(2.5rem,6vw,5rem)] text-[#EEEEEE] tracking-tight leading-none mb-6">
-            FIELD <span className="text-[#F6C90E]">DEPLOYMENTS</span>
+            FIELD <span className="text-[#F6C90E]">PROJECTS</span>
           </h2>
           <div className="flex flex-wrap gap-2">
             {['ALL', ...new Set(projects.map(p => p.category))].map(cat => (

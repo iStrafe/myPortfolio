@@ -60,7 +60,7 @@ export default function TechCarousel() {
       <style>{`
         @keyframes marquee-scroll {
           0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-25%); }
         }
       `}</style>
 
@@ -94,7 +94,7 @@ export default function TechCarousel() {
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
           >
-            {[...TECH, ...TECH].map((tech, i) => (
+            {[...TECH, ...TECH, ...TECH, ...TECH].map((tech, i) => (
               <Pill key={i} tech={tech} />
             ))}
           </div>
@@ -115,8 +115,8 @@ function Pill({ tech }) {
         alignItems: 'center',
         gap: '14px',
         padding: '16px 28px',
-        border: `1px solid ${hov ? tech.color + 'BB' : 'rgba(246,201,14,0.18)'}`,
-        background: hov ? `${tech.color}0D` : 'rgba(58,71,80,0.5)',
+        border: 'none',
+        background: hov ? `${tech.color}0D` : 'transparent',
         whiteSpace: 'nowrap',
         cursor: 'default',
         transition: 'border-color 0.25s, background 0.25s, box-shadow 0.25s',

@@ -41,7 +41,7 @@ export default function Cursor() {
   return (
     <>
       <div className="cursor-dot" style={{ left: pos.x, top: pos.y }} />
-      <div className={`cursor-ring ${hovering ? 'hovering' : ''}`} style={{ left: ring.x, top: ring.y }} />
+      {/* <div className={`cursor-ring ${hovering ? 'hovering' : ''}`} style={{ left: ring.x, top: ring.y }} /> */}
     </>
   )
 }

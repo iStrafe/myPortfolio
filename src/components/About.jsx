@@ -28,7 +28,7 @@ export default function About() {
             <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
           </div>
           <h2 className="font-display font-black text-[clamp(2.5rem,6vw,5rem)] text-[#EEEEEE] tracking-tight leading-none">
-            ABOUT <span className="text-[#F6C90E]">PROTOCOL</span>
+            ABOUT <span className="text-[#F6C90E]">ME</span>
           </h2>
         </div>
 

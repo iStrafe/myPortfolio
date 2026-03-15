@@ -27,7 +27,7 @@ export default function Skills() {
       <div ref={ref} className="max-w-6xl mx-auto px-8 lg:px-16">
         <div className={`mb-16 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="flex items-center gap-4 mb-4">
-            <div className="sys-label text-[#F6C90E]/50">SECTION::04</div>
+            <div className="sys-label text-[#F6C90E]/50">SECTION::04 /////</div>
             <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
           </div>
           <h2 className="font-display font-black text-[clamp(2.5rem,6vw,5rem)] text-[#EEEEEE] tracking-tight leading-none">
