@@ -13,7 +13,7 @@ function useInView(t = 0.15) {
 
 const timeline = [
   { year: '2023', role: 'Database Specialist', company: 'Adamson University', desc: 'Earned Specialist in Databases Certificate using Mysql, MSSql, and Mongodb.' },
-  { year: '2024', role: 'Full-Stack Dev', company: 'Capstone Project - Adu:Cats Website', desc: 'Developed an AI-assisted cat breed recognition feature by Integrating OpanAIs Vision API, enabling breed prediction from uploaded image.' },
+  { year: '2024', role: 'Full-Stack Dev', company: 'Capstone Project - Adu:Cats Website', desc: 'Developed an AI-powered web-based cat adoption platform for Aducats non-profit Organization that helps connect the cats with adopters. The system has cat breed prediction, adoption application with status tracking, appointment scheduling and advanced search tools.' },
   { year: '2025', role: 'Software Engineer Intern', company: '7th Pillar Integration systems corp.', desc: 'Participated in meetings with foreign investors to present UI and Incorporate stakeholder feedbacks into UI revisions' },
 ]
 
