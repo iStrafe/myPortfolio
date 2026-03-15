@@ -6,7 +6,7 @@ export default function Footer() {
           <div className="w-5 h-5 border border-[#F6C90E]/40 flex items-center justify-center">
             <div className="w-2 h-2 bg-[#F6C90E]" style={{ clipPath: 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)' }} />
           </div>
-          <span className="font-display font-bold tracking-widest text-sm text-[#EEEEEE]/40">ALEX MERCER</span>
+          <span className="font-display font-bold tracking-widest text-sm text-[#EEEEEE]/40">REGINALD UNISA</span>
         </div>
         <div className="sys-label text-[#EEEEEE]/20">SYS::2025 // ALL RIGHTS RESERVED</div>
         <div className="flex gap-3">

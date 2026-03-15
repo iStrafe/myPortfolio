@@ -12,12 +12,8 @@ function useInView(t = 0.1) {
 }
 
 const projects = [
-  { id:'001', title:'NEXUS PLATFORM', category:'SAAS / FULLSTACK', desc:'A B2B analytics platform handling 2M+ events/day. Real-time dashboards, custom query builder, role-based access.', tech:['React','Node.js','PostgreSQL','Redis','AWS'], accent:'#F6C90E' },
-  { id:'002', title:'WAVEFORM UI', category:'DESIGN SYSTEM', desc:'An open-source React component library with 60+ components, dark/light themes, and full accessibility compliance.', tech:['React','TypeScript','Storybook','Radix UI'], accent:'#55AAFF' },
-  { id:'003', title:'FLEET OPS', category:'MOBILE / IoT', desc:'Real-time logistics management for 500+ vehicles. GPS tracking, predictive maintenance alerts, driver scoring.', tech:['React Native','Go','MQTT','InfluxDB'], accent:'#44EEA0' },
-  { id:'004', title:'CODEX AI', category:'AI / ML TOOLING', desc:'Developer productivity tool powered by LLMs. Code review automation, doc generation, and PR summarization.', tech:['Python','FastAPI','OpenAI','Docker'], accent:'#CC55FF' },
-  { id:'005', title:'TERRA MAPS', category:'GEOSPATIAL / VIZ', desc:'Interactive 3D geospatial visualization for urban planning. WebGL rendering of 10M+ data points at 60fps.', tech:['Three.js','deck.gl','MapboxGL','Node.js'], accent:'#FF5577' },
-  { id:'006', title:'CIPHER VAULT', category:'SECURITY / INFRA', desc:'End-to-end encrypted secrets management for dev teams. Zero-knowledge architecture, CLI + web interface.', tech:['Rust','WebAssembly','React','AES-256'], accent:'#FFCC33' },
+  { id:'001', title:'AdU-Cats: Web Adoption System', category:'FULLSTACK', desc:'A Dedicated website for Aducats Organization focusing on streamlining cat adoptions. With AI-Powered breed prediction', tech:['Laravel','Vite','MySQL','Hostinger','Vanilla JS', 'Tailwind'], accent:'#F6C90E' },
+  
 ]
 
 function Card({ p, i, inView }) {
@@ -59,12 +55,12 @@ function Card({ p, i, inView }) {
         <div className="flex gap-5">
           <a href="#" className="flex items-center gap-1.5 text-[#EEEEEE]/40 hover:text-[#EEEEEE] transition-colors font-display text-xs tracking-wider">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-            LIVE DEMO
+            DEMO NO LONGER AVAILABLE
           </a>
-          <a href="#" className="flex items-center gap-1.5 text-[#EEEEEE]/40 hover:text-[#EEEEEE] transition-colors font-display text-xs tracking-wider">
+          {/* <a href="#" className="flex items-center gap-1.5 text-[#EEEEEE]/40 hover:text-[#EEEEEE] transition-colors font-display text-xs tracking-wider">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.24 1 1 3.24 1 6c0 2.21 1.43 4.08 3.41 4.75-.05-.42-.09-1.07.02-1.53l.66-2.78s-.17-.34-.17-.83c0-.78.45-1.36.99-1.36.47 0 .69.35.69.78 0 .47-.3 1.18-.46 1.84-.13.55.28 1 .82 1 .98 0 1.64-1.04 1.64-2.54 0-1.33-.95-2.26-2.32-2.26-1.58 0-2.5 1.18-2.5 2.4 0 .48.18.99.41 1.27a.16.16 0 01.04.16l-.15.62c-.02.1-.08.12-.17.07-.7-.33-1.14-1.35-1.14-2.17 0-1.76 1.28-3.38 3.7-3.38 1.94 0 3.45 1.38 3.45 3.23 0 1.93-1.21 3.48-2.9 3.48-.57 0-1.1-.3-1.28-.64l-.35 1.29c-.13.49-.47 1.1-.7 1.47A5 5 0 106 1z" fill="currentColor"/></svg>
             SOURCE
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

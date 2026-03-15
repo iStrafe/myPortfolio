@@ -12,10 +12,10 @@ function useInView(t = 0.15) {
 }
 
 const socials = [
-  { label:'GITHUB',    handle:'@alexmercer',       href:'#' },
-  { label:'LINKEDIN',  handle:'in/alexmercer',     href:'#' },
-  { label:'TWITTER/X', handle:'@alex_m_dev',       href:'#' },
-  { label:'EMAIL',     handle:'alex@example.com',  href:'mailto:alex@example.com' },
+  { label:'GITHUB',    handle:'https://github.com/iStrafe',       href:'https://github.com/iStrafe' },
+  { label:'LINKEDIN',  handle:'https://www.linkedin.com/in/istrafe/',     href:'https://www.linkedin.com/in/istrafe/' },
+  { label:'FACEBOOK', handle:'@iTachyon',       href:'https://www.facebook.com/iTachyon' },
+  { label:'EMAIL',     handle:'yugotabata@gmail.com',  href:'yugotabata@gmail.com' },
 ]
 
 export default function Contact() {
@@ -31,7 +31,7 @@ export default function Contact() {
       <div ref={ref} className="max-w-6xl mx-auto px-8 lg:px-16">
         <div className={`mb-16 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="flex items-center gap-4 mb-4">
-            <div className="sys-label text-[#F6C90E]/50">SECTION::05</div>
+            <div className="sys-label text-[#F6C90E]/50">SECTION::05 /////</div>
             <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
           </div>
           <h2 className="font-display font-black text-[clamp(2.5rem,6vw,5rem)] text-[#EEEEEE] tracking-tight leading-none">
