@@ -12,13 +12,14 @@ function useInView(t = 0.15) {
 }
 
 const groups = [
-  { group:'FRONTEND',  icon:'⬡', skills:[{n:'React / Next.js',p:60},{n:'CSS / Tailwind',p:20},{n:'Bootstrap',p:20}] },
-  { group:'BACKEND',   icon:'◈', skills:[{n:'Node.js / Express',p:30},{n:'Laravel / PHP',p:60},{n:'C#',p:10}] },
-  { group:'DATA / DB', icon:'▣', skills:[{n:'MySQL',p:50},{n:'MongoDB',p:50}] },
-  { group:'CLOUD',     icon:'◬', skills:[{n:'AWS',p:20},{n:'Hostinger',p:60},{n:'CI/CD',p:20}] },
+  { group:'FRONTEND',  icon:'⬡', skills:[{n:'React',p:60},{n:'CSS / Tailwind',p:20},{n:'Bootstrap',p:20}] },
+  { group:'BACKEND',   icon:'◈', skills:[{n:'Node.js',p:30},{n:'Laravel',p:60},{n:'C#',p:10}] },
+  { group:'DATA / DB', icon:'▣', skills:[{n:'MySQL',p:50},{n:'MongoDB',p:50},{n:'PostgreSql',p:50}] },
+  { group:'CLOUD',     icon:'◬', skills:[{n:'AWS',p:20},{n:'Hostinger',p:60},] },
+
 ]
 
-const tools = ['VS Code','Figma','Git','Postman','Mongodb','Figma','Adobe XD','Vercel','Cloudflare','GitHub Actions']
+const tools = ['Figma','Git/Github','Postman','PostgreSql','Figma','Adobe XD','Vercel','Amazon Web Services','GitHub Actions']
 
 export default function Skills() {
   const [ref, inView] = useInView()

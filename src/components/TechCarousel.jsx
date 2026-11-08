@@ -64,12 +64,12 @@ export default function TechCarousel() {
         }
       `}</style>
 
-      <section className="py-16 relative overflow-hidden">
+      <section className="py-24 relative overflow-hidden">
         {/* Fade edges */}
         <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, #252C33 0%, transparent 100%)' }} />
+          style={{ background: 'linear-gradient(90deg, #3A4750 0%, transparent 80%)' }} />
         <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(270deg, #252C33 0%, transparent 100%)' }} />
+          style={{ background: 'linear-gradient(270deg, #3A4750 0%, transparent 80%)' }} />
 
         {/* Header */}
         <div className="px-8 lg:px-16 mb-10">
