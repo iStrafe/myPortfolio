@@ -13,9 +13,9 @@ function useInView(t = 0.15) {
 
 const socials = [
   { label:'GITHUB',    handle:'https://github.com/iStrafe',       href:'https://github.com/iStrafe' },
-  { label:'LINKEDIN',  handle:'https://www.linkedin.com/in/istrafe/',     href:'https://www.linkedin.com/in/istrafe/' },
+  { label:'LINKEDIN',  handle:'https://www.linkedin.com/in/reginaldu/',     href:'https://www.linkedin.com/in/reginaldu/' },
   { label:'FACEBOOK', handle:'@iTachyon',       href:'https://www.facebook.com/iTachyon' },
-  { label:'EMAIL',     handle:'yugotabata@gmail.com',  href:'yugotabata@gmail.com' },
+  { label:'EMAIL',     handle:'reginald.unisa.p@gmail.com',  href:'reginald.unisa.p@gmail.com' },
 ]
 
 export default function Contact() {

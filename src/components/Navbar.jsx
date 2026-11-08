@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 const navLinks = [
   {
@@ -52,8 +53,12 @@ const navLinks = [
 
 export default function Navbar() {
   const [active, setActive] = useState('home')
+  const { pathname } = useLocation()
+  const onHome = pathname === '/'
 
   useEffect(() => {
+    // Project detail pages live under /projects/*, so highlight Projects there
+    if (!onHome) { setActive(pathname.startsWith('/projects') ? 'projects' : ''); return }
     const onScroll = () => {
       const sections = document.querySelectorAll('section[id]')
       sections.forEach(sec => {
@@ -61,9 +66,10 @@ export default function Navbar() {
         if (top <= 120 && top > -sec.offsetHeight + 120) setActive(sec.id)
       })
     }
+    onScroll()
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [onHome, pathname])
 
   return (
     <nav className="sidebar group/nav">
@@ -78,14 +84,14 @@ export default function Navbar() {
       {/* Nav links */}
       <div className="flex-1 flex flex-col justify-center gap-1 py-6">
         {navLinks.map(link => (
-          <a
+          <Link
             key={link.href}
-            href={link.href}
+            to={`/${link.href}`}
             className={`sidebar-link ${active === link.href.slice(1) ? 'active' : ''}`}
           >
             <span className="sidebar-icon">{link.icon}</span>
             <span className="sidebar-label">{link.label}</span>
-          </a>
+          </Link>
         ))}
       </div>
 

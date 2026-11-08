@@ -12,9 +12,11 @@ There is no linter, formatter, type checker or test suite configured. Use `npm r
 
 ## Stack & deployment
 
-A single-page personal portfolio: React 18 + Vite 5 + Tailwind CSS 3 (PostCSS/autoprefixer), plain JSX with no TypeScript and no router. There is no animation library: components animate by hand with CSS transitions and IntersectionObserver. It deploys to Vercel (`vercel.json` runs `npm install` / `npm run build`). `dist/` is build output and is gitignored.
+A single-page personal portfolio: React 18 + Vite 5 + Tailwind CSS 3 (PostCSS/autoprefixer), plain JSX with no TypeScript, and React Router v7 (`BrowserRouter` in `main.jsx`). There is no animation library: components animate by hand with CSS transitions and IntersectionObserver. It deploys to Vercel (`vercel.json` runs `npm install` / `npm run build` and rewrites every path to `/index.html` so client-side routes survive a refresh). `dist/` is build output and is gitignored.
 
 ## Architecture
+
+- **Routes** are declared in `src/App.jsx`: `/` renders the one-page `Home` sections, and project case-study pages live in `src/pages/` (e.g. `/projects/minecraft-ec2` → `pages/MinecraftEc2.jsx`). `ScrollManager` in `App.jsx` scrolls to a `#hash` target after navigation, which is why the sidebar links are `<Link to="/#about">` and still work from sub-pages. A project card links to its page through the `details` field in the `projects` array. Static assets for a project page go in `public/projects/<slug>/`.
 
 - `src/App.jsx` lays out the page as a fixed list of sections: `Hero → About → TechCarousel → Projects → Skills → Contact`, with `<Divider />` between sections and `<Footer />` at the end. The whole content column is wrapped in `pl-16` to make room for the fixed 64px left sidebar (`Navbar.jsx`).
 - **Navigation** uses hash anchors (`#home`, `#about`, `#projects`, `#skills`, …) defined in the `navLinks` array in `Navbar.jsx`. Each anchor must match the `id` on that section's root element. Adding or renaming a section means updating both places.

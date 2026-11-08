@@ -14,8 +14,8 @@ function useInView(t = 0.15) {
 const groups = [
   { group:'FRONTEND',  icon:'⬡', skills:[{n:'React',p:60},{n:'CSS / Tailwind',p:20},{n:'Bootstrap',p:20}] },
   { group:'BACKEND',   icon:'◈', skills:[{n:'Node.js',p:30},{n:'Laravel',p:60},{n:'C#',p:10}] },
-  { group:'DATA / DB', icon:'▣', skills:[{n:'MySQL',p:50},{n:'MongoDB',p:50},{n:'PostgreSql',p:50}] },
-  { group:'CLOUD',     icon:'◬', skills:[{n:'AWS',p:20},{n:'Hostinger',p:60},] },
+  { group:'DATA / DB', icon:'▣', skills:[{n:'MySQL',p:50},{n:'MongoDB',p:10},{n:'PostgreSql',p:30}] },
+  { group:'CLOUD',     icon:'◬', skills:[{n:'AWS (EC2, S3, VPC, IAM)',p:80},{n:'Hostinger',p:20},] },
 
 ]
 

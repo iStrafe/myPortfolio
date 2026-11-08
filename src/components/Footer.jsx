@@ -8,7 +8,7 @@ export default function Footer() {
           </div>
           <span className="font-display font-bold tracking-widest text-sm text-[#EEEEEE]/40">REGINALD UNISA</span>
         </div>
-        <div className="sys-label text-[#EEEEEE]/20">SYS::2025 // ALL RIGHTS RESERVED</div>
+        <div className="sys-label text-[#EEEEEE]/20">SYS::2026 // ALL RIGHTS RESERVED</div>
         <div className="flex gap-3">
           {['GH','LI','TW'].map(s => (
             <a key={s} href="#" className="w-7 h-7 border border-[#F6C90E]/15 flex items-center justify-center font-mono text-[10px] text-[#EEEEEE]/35 hover:border-[#F6C90E]/45 hover:text-[#F6C90E] transition-all">

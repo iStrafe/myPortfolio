@@ -73,7 +73,7 @@ export default function Hero() {
           {/* Pre-label */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-px bg-[#F6C90E]" />
-            <span className="sys-label">MY PORTFOLIO // 2025</span>
+            <span className="sys-label">MY PORTFOLIO // 2026</span>
             <div className="w-2 h-2 bg-[#F6C90E] rounded-full animate-pulse-y" />
           </div>
 
@@ -102,8 +102,10 @@ export default function Hero() {
           </div>
 
           <p className="max-w-xl text-[#EEEEEE]/55 text-base lg:text-lg leading-relaxed mb-12">
-            BS-Information Technology fresh graduate majoring in Web-development,
-            with a pasion to build scalable and user friendly Web applications.
+            BS Information Technology graduate, Major in Web Development with internship experience handling REST APIs and
+            building UI components using React.js and Tailwind CSS. Led and developed a deployed web-based Cat adoption
+            system as capstone project with Google OAuth sign-in and OpenAI Vision API integration. Also, provisions AWS
+            infrastructure with Terraform (EC2, VPC, IAM, EBS).
           </p>
 
           {/* CTAs */}
