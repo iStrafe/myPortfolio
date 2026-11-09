@@ -22,36 +22,38 @@ html {
 ::-webkit-scrollbar-thumb { background: var(--yellow); }
 
 body {
-  background: #000607f9;
+  background: #060C0D;
   color: var(--light);
   font-family: 'Barlow', sans-serif;
   overflow-x: hidden;
-  cursor: none;
 }
 
+/* ── Keyboard focus & skip link ── */
+:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+main:focus { outline: none; }
+.skip-link {
+  position: fixed; left: 80px; top: 8px;
+  z-index: 300;
+  padding: 10px 16px;
+  background: var(--yellow);
+  color: #252C33;
+  font-weight: 500;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+
 /* ── Custom cursor ── */
+/* The class is added from JS, so touch devices and failed loads keep a normal cursor. */
+html.custom-cursor body { cursor: none; }
 .cursor-dot {
   width: 8px; height: 8px;
   background: var(--yellow);
   border-radius: 50%;
-  position: fixed; pointer-events: none;
+  position: fixed; left: 0; top: 0;
+  pointer-events: none;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width .15s, height .15s;
-}
-.cursor-ring {
-  width: 30px; height: 30px;
-  border: 2px solid var(--yellow);
-  position: fixed; pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: all 0.08s linear;
-  clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
-}
-.cursor-ring.hovering {
-  width: 46px; height: 46px;
-  border-color: var(--yellow);
-  background: rgba(246,201,14,0.05);
+  opacity: 0;
+  will-change: transform;
 }
 
 /* ── HUD corners ── */
@@ -72,15 +74,6 @@ body {
     linear-gradient(rgba(246,201,14,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(246,201,14,0.04) 1px, transparent 1px);
   background-size: 80px 80px;
-}
-
-/* ── Scanline sweep ── */
-.scanlines {
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
-  );
-  pointer-events: none;
 }
 
 /* ── Sys label ── */
@@ -150,7 +143,8 @@ body {
   overflow: hidden;
   display: flex; flex-direction: column;
 }
-.sidebar:hover {
+/* :has(:focus-visible) opens it for keyboard users without sticking open after a mouse click. */
+.sidebar:hover, .sidebar:has(:focus-visible) {
   width: 220px;
   border-right-color: rgba(246,201,14,0.25);
   box-shadow: 4px 0 40px rgba(0,0,0,0.4);
@@ -159,10 +153,12 @@ body {
   display: flex; align-items: center; gap: 16px;
   padding: 14px 18px;
   white-space: nowrap;
-  color: rgba(238,238,238,0.45);
+  color: rgba(238,238,238,0.7);
   transition: color 0.2s, background 0.2s;
   position: relative;
 }
+/* The sidebar clips overflow, so the focus ring has to sit inside the link. */
+.sidebar-link:focus-visible { outline-offset: -2px; }
 .sidebar-link::before {
   content: '';
   position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
@@ -189,39 +185,58 @@ body {
   letter-spacing: 0.18em; text-transform: uppercase;
   opacity: 0; transition: opacity 0.2s 0.1s;
 }
-.sidebar:hover .sidebar-label { opacity: 1; }
+.sidebar:hover .sidebar-label, .sidebar:has(:focus-visible) .sidebar-label { opacity: 1; }
 
 /* ── Marquee ── */
-.marquee-track { display: flex; gap: 0; }
-.marquee-track:hover .marquee-inner { animation-play-state: paused; }
-.marquee-inner {
-  display: flex; gap: 48px; align-items: center;
-  animation: marquee 28s linear infinite;
-  flex-shrink: 0;
+/* A mask fades the edges into whatever is behind them, so it cannot drift from the page colour. */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8rem, #000 calc(100% - 8rem), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8rem, #000 calc(100% - 8rem), transparent);
+}
+/* padding-right equals the gap so that one copy plus its gap is exactly a quarter of the track. */
+.marquee-track {
+  display: flex; gap: 24px;
+  padding-right: 24px;
+  width: max-content;
+  animation: marquee-scroll 22s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover, .marquee-track.paused { animation-play-state: paused; }
+@keyframes marquee-scroll {
+  to { transform: translateX(-25%); }
 }
 
 /* ── Tech pill ── */
 .tech-pill {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 20px;
-  border: 1px solid rgba(246,201,14,0.2);
-  background: rgba(58,71,80,0.4);
+  display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0;
+  padding: 16px 28px;
   white-space: nowrap;
-  transition: all 0.25s;
-  position: relative;
+  transition: background 0.25s, box-shadow 0.25s;
 }
 .tech-pill:hover {
-  border-color: rgba(246,201,14,0.7);
-  background: rgba(246,201,14,0.07);
-  box-shadow: 0 0 18px rgba(246,201,14,0.2), inset 0 0 18px rgba(246,201,14,0.04);
+  background: color-mix(in srgb, var(--tech-color) 5%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--tech-color) 27%, transparent),
+    inset 0 0 16px color-mix(in srgb, var(--tech-color) 7%, transparent);
 }
-.tech-pill:hover .tech-pill-name { color: var(--yellow); }
+.tech-pill-img { display: block; opacity: 0.65; transition: opacity 0.25s; }
+.tech-pill:hover .tech-pill-img { opacity: 1; }
+.tech-pill-icon {
+  display: flex;
+  color: color-mix(in srgb, var(--tech-color) 67%, transparent);
+  transition: color 0.25s;
+}
+.tech-pill:hover .tech-pill-icon { color: var(--tech-color); }
 .tech-pill-name {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600; font-size: 0.95rem;
+  font-weight: 700; font-size: 1.15rem;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--light); transition: color 0.25s;
+  color: rgba(238,238,238,0.6);
+  transition: color 0.25s;
 }
+.tech-pill:hover .tech-pill-name { color: var(--light); }
 
 /* ── Project card ── */
 .project-card-inner {
@@ -232,9 +247,20 @@ body {
   box-shadow: 0 0 30px rgba(246,201,14,0.07), inset 0 0 20px rgba(246,201,14,0.02);
 }
 
-/* ── Nav link underline ── */
-.nav-link::after {
-  content: ''; display: block; height: 1px;
-  background: var(--yellow); width: 0; transition: width .3s;
+/* ── Reduced motion ── */
+/* A near-zero duration rather than "none", so every element still lands on its end state. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  /* Without the clip-path animation these overlays would cover the name permanently. */
+  .glitch-text::before, .glitch-text::after { display: none; }
+  /* Show one static, wrapping set of logos instead of a frozen strip that runs off screen. */
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee-track { animation: none; width: auto; flex-wrap: wrap; justify-content: center; padding-right: 0; }
+  .tech-pill-duplicate { display: none; }
 }
-.nav-link:hover::after, .nav-link.active::after { width: 100%; }

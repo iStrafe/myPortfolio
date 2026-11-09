@@ -1,20 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-
-function useInView(t = 0.1) {
-  const ref = useRef(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold: t })
-    if (ref.current) obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [t])
-  return [ref, inView]
-}
+import useInView from '../hooks/useInView'
+import usePageMeta from '../hooks/usePageMeta'
 
 /* ───────────────────────── Content ───────────────────────── */
 
-const DIAGRAM = '/projects/minecraft-ec2/architecture.png'
+const DIAGRAM = '/projects/minecraft-ec2/architecture.webp'
 
 const STACK = ['Amazon EC2 t4g.medium', 'Amazon VPC', 'Amazon EBS gp3', 'Data Lifecycle Manager', 'IAM Identity Center', 'AWS Budgets', 'Terraform', 'Paper 1.20.1', 'systemd', 'Ubuntu 24.04 ARM64']
 
@@ -196,13 +187,13 @@ function SectionHead({ num, title, accent, sub }) {
   return (
     <div className="mb-8">
       <div className="flex items-center gap-4 mb-3">
-        <div className="sys-label text-[#F6C90E]/50">{num} /////</div>
+        <div className="sys-label text-[#F6C90E]/80">{num} /////</div>
         <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
       </div>
       <h2 className="font-display font-black text-[clamp(2rem,4.5vw,3.25rem)] text-[#EEEEEE] tracking-tight leading-none">
         {title} {accent && <span className="text-[#F6C90E]">{accent}</span>}
       </h2>
-      {sub && <p className="mt-3 text-[#EEEEEE]/45 text-sm max-w-2xl">{sub}</p>}
+      {sub && <p className="mt-3 text-[#EEEEEE]/70 text-sm max-w-2xl">{sub}</p>}
     </div>
   )
 }
@@ -217,7 +208,7 @@ function Section({ id, children }) {
 
 function Panel({ children, className = '' }) {
   return (
-    <div className={`relative border border-[#F6C90E]/10 bg-[#303841] p-6 ${className}`}>
+    <div className={`relative min-w-0 break-words border border-[#F6C90E]/10 bg-[#303841] p-6 ${className}`}>
       <div className="hud-corner tl" />
       <div className="hud-corner br" />
       {children}
@@ -229,26 +220,38 @@ function Status({ s }) {
   const style = s === 'DONE'
     ? 'border-[#F6C90E]/40 text-[#F6C90E] bg-[#F6C90E]/5'
     : s === 'IN PROGRESS'
-      ? 'border-[#F6C90E]/25 text-[#F6C90E]/70'
-      : 'border-[#EEEEEE]/15 text-[#EEEEEE]/40'
+      ? 'border-[#F6C90E]/25 text-[#F6C90E]/80'
+      : 'border-[#EEEEEE]/15 text-[#EEEEEE]/70'
   return <span className={`font-mono text-[10px] tracking-wider px-2 py-0.5 border whitespace-nowrap ${style}`}>{s}</span>
 }
 
 function Lightbox({ open, onClose }) {
+  const closeRef = useRef(null)
+
   useEffect(() => {
     if (!open) return
-    const onKey = e => { if (e.key === 'Escape') onClose() }
+    // Move focus into the dialog, keep it there (Close is the only control), and hand it back on exit.
+    const previouslyFocused = document.activeElement
+    closeRef.current?.focus()
+    const onKey = e => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Tab') { e.preventDefault(); closeRef.current?.focus() }
+    }
     window.addEventListener('keydown', onKey)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prev }
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+      previouslyFocused?.focus()
+    }
   }, [open, onClose])
 
   if (!open) return null
   return (
     <div role="dialog" aria-modal="true" aria-label="Architecture diagram, enlarged"
       className="fixed inset-0 z-[200] bg-black/90 overflow-auto p-4 md:p-10" onClick={onClose}>
-      <button onClick={onClose}
+      <button ref={closeRef} type="button" onClick={onClose}
         className="fixed top-4 right-4 z-10 font-mono text-xs tracking-widest px-3 py-1.5 border border-[#F6C90E]/40 text-[#F6C90E] bg-[#1E242A] hover:bg-[#F6C90E]/10">
         CLOSE [ESC]
       </button>
@@ -265,22 +268,25 @@ export default function MinecraftEc2() {
   const closeZoom = useCallback(() => setZoom(false), [])
   const [heroIn, setHeroIn] = useState(false)
 
+  usePageMeta({
+    title: 'Minecraft on AWS EC2 — Reginald Unisa',
+    description: 'Case study: a private Minecraft server on one ARM EC2 instance, built entirely with Terraform. It runs only while people play, powers itself off when idle and snapshots its world every night.',
+  })
+
   useEffect(() => {
-    const prev = document.title
-    document.title = 'Minecraft on AWS EC2 — REGINALD'
     const t = requestAnimationFrame(() => setHeroIn(true))
-    return () => { document.title = prev; cancelAnimationFrame(t) }
+    return () => cancelAnimationFrame(t)
   }, [])
 
   const maxTotal = Math.max(...ESTIMATES.map(e => e.total))
 
   return (
-    <main className="relative">
+    <main id="main" tabIndex={-1} className="relative">
       {/* ── Hero ── */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 grid-bg opacity-60 pointer-events-none" />
         <div className="relative max-w-6xl mx-auto px-8 lg:px-16 pt-16 pb-16 md:pt-24">
-          <Link to="/#projects" className="inline-flex items-center gap-2 font-display text-xs tracking-widest text-[#EEEEEE]/45 hover:text-[#F6C90E] transition-colors mb-12">
+          <Link to="/#projects" className="inline-flex items-center gap-2 font-display text-xs tracking-widest text-[#EEEEEE]/70 hover:text-[#F6C90E] transition-colors mb-12">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6H2M6 2L2 6l4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
             BACK TO PROJECTS
           </Link>
@@ -293,20 +299,20 @@ export default function MinecraftEc2() {
             <h1 className="font-display font-black text-[clamp(2.75rem,8vw,6.5rem)] text-[#EEEEEE] tracking-tight leading-[0.9] mb-6">
               MINECRAFT ON <span className="text-[#F6C90E]">AWS EC2</span>
             </h1>
-            <p className="text-[#EEEEEE]/60 text-lg leading-relaxed max-w-3xl mb-8">
+            <p className="text-[#EEEEEE]/70 text-lg leading-relaxed max-w-3xl mb-8">
               A private Minecraft Java 1.20.1 server for up to five friends, built entirely with Terraform on one
               EC2 instance in Singapore. It runs only while people play and backs up its world every night.
             </p>
             <div className="flex flex-wrap gap-2 mb-12">
               {STACK.map(t => (
-                <span key={t} className="font-mono text-[10px] px-2 py-1 bg-[#3A4750] text-[#EEEEEE]/60 border border-[#EEEEEE]/10">{t}</span>
+                <span key={t} className="font-mono text-[10px] px-2 py-1 bg-[#3A4750] text-[#EEEEEE]/70 border border-[#EEEEEE]/10">{t}</span>
               ))}
             </div>
 
             <dl className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#F6C90E]/10 border border-[#F6C90E]/10">
               {META.map(m => (
                 <div key={m.k} className="bg-[#1E242A] p-4">
-                  <dt className="font-mono text-[10px] tracking-widest text-[#F6C90E]/60 mb-1">{m.k}</dt>
+                  <dt className="font-mono text-[10px] tracking-widest text-[#F6C90E]/80 mb-1">{m.k}</dt>
                   <dd className="font-display text-base text-[#EEEEEE]/85 tracking-wide">{m.v}</dd>
                 </div>
               ))}
@@ -321,7 +327,7 @@ export default function MinecraftEc2() {
           {STATS.map(s => (
             <Panel key={s.l} className="!p-4">
               <div className="font-display font-black text-3xl text-[#F6C90E] leading-none mb-2">{s.n}</div>
-              <div className="font-mono text-[10px] tracking-wide text-[#EEEEEE]/45 uppercase leading-snug">{s.l}</div>
+              <div className="font-mono text-[10px] tracking-wide text-[#EEEEEE]/70 uppercase leading-snug">{s.l}</div>
             </Panel>
           ))}
         </Reveal>
@@ -329,8 +335,8 @@ export default function MinecraftEc2() {
         {/* ── Jump list ── */}
         <nav aria-label="On this page" className="flex flex-wrap gap-x-5 gap-y-2 pb-12">
           {TOC.map(([id, label], i) => (
-            <a key={id} href={`#${id}`} className="font-mono text-[11px] tracking-wider text-[#EEEEEE]/35 hover:text-[#F6C90E] transition-colors">
-              <span className="text-[#F6C90E]/40">{String(i + 1).padStart(2, '0')}</span> {label.toUpperCase()}
+            <a key={id} href={`#${id}`} className="font-mono text-[11px] tracking-wider text-[#EEEEEE]/70 hover:text-[#F6C90E] transition-colors">
+              <span className="text-[#F6C90E]/80">{String(i + 1).padStart(2, '0')}</span> {label.toUpperCase()}
             </a>
           ))}
         </nav>
@@ -340,7 +346,7 @@ export default function MinecraftEc2() {
           <Reveal>
             <SectionHead num="01" title="THE" accent="BRIEF" />
             <div className="grid lg:grid-cols-5 gap-8">
-              <div className="lg:col-span-2 space-y-4 text-[#EEEEEE]/60 leading-relaxed">
+              <div className="lg:col-span-2 space-y-4 text-[#EEEEEE]/70 leading-relaxed">
                 <p>
                   Friends wanted a low-lag Minecraft server for 2 to 5 people who play part-time. Paying for a server
                   that sits idle around the clock made no sense, and neither did losing the world if something broke.
@@ -351,16 +357,16 @@ export default function MinecraftEc2() {
                   powers itself off 30 minutes after the last player leaves, and Data Lifecycle Manager snapshots the world
                   disk every day.
                 </p>
-                <p className="text-[#EEEEEE]/40 text-sm">
+                <p className="text-[#EEEEEE]/70 text-sm">
                   Built in ten phases between 11 and 25 October 2026, followed by incident drills from 28 October.
                 </p>
               </div>
               <div className="lg:col-span-3 grid sm:grid-cols-2 gap-3">
                 {HIGHLIGHTS.map((h, i) => (
                   <Panel key={h.t}>
-                    <div className="font-mono text-[10px] text-[#F6C90E]/50 mb-2">0{i + 1}</div>
+                    <div className="font-mono text-[10px] text-[#F6C90E]/80 mb-2">0{i + 1}</div>
                     <h3 className="font-display font-bold text-lg text-[#EEEEEE] tracking-wide mb-2">{h.t}</h3>
-                    <p className="text-[#EEEEEE]/45 text-sm leading-relaxed">{h.d}</p>
+                    <p className="text-[#EEEEEE]/70 text-sm leading-relaxed">{h.d}</p>
                   </Panel>
                 ))}
               </div>
@@ -374,15 +380,15 @@ export default function MinecraftEc2() {
             <SectionHead num="02" title=" AWS INFRASTRUCTURE" accent="DIAGRAM"
               sub="Everything inside the AWS account box is created by Terraform except IAM Identity Center and AWS Budgets, which were set up by hand." />
             <figure className="mb-10">
-              <button type="button" onClick={() => setZoom(true)} data-hover
+              <button type="button" onClick={() => setZoom(true)}
                 className="group relative block w-full border border-[#F6C90E]/15 hover:border-[#F6C90E]/45 transition-colors bg-white p-2 md:p-4">
                 <img src={DIAGRAM} alt="AWS architecture diagram: players and admin laptop reach an EC2 instance through an internet gateway inside a VPC in ap-southeast-1; Data Lifecycle Manager snapshots the tagged world volume daily."
-                  width="2240" height="1400" loading="lazy" className="w-full h-auto" />
+                  width="2240" height="1400" loading="lazy" decoding="async" className="w-full h-auto" />
                 <span className="absolute bottom-3 right-3 font-mono text-[10px] tracking-widest px-2 py-1 bg-[#1E242A] text-[#F6C90E] border border-[#F6C90E]/40 opacity-80 group-hover:opacity-100">
                   CLICK TO ENLARGE
                 </span>
               </button>
-              <figcaption className="mt-3 font-mono text-[10px] tracking-wide text-[#EEEEEE]/35">
+              <figcaption className="mt-3 font-mono text-[10px] tracking-wide text-[#EEEEEE]/70">
                 FIG.01 · Drawn with the official AWS Architecture Icons. EBS volumes live in the Availability Zone, not the subnet.
               </figcaption>
             </figure>
@@ -394,7 +400,7 @@ export default function MinecraftEc2() {
                   {FLOWS.map(f => (
                     <div key={f.f} className="grid sm:grid-cols-[130px_1fr] gap-1 sm:gap-4 py-3 border-b border-[#F6C90E]/10">
                       <div className="font-mono text-[11px] tracking-wider text-[#F6C90E]/80 uppercase pt-0.5">{f.f}</div>
-                      <div className="text-sm text-[#EEEEEE]/55 leading-relaxed">{f.p}</div>
+                      <div className="text-sm text-[#EEEEEE]/70 leading-relaxed">{f.p}</div>
                     </div>
                   ))}
                 </div>
@@ -405,7 +411,7 @@ export default function MinecraftEc2() {
                   {NOT_IN_DESIGN.map(([t, d]) => (
                     <li key={t} className="flex gap-3 text-sm leading-relaxed">
                       <span className="text-[#F6C90E] mt-0.5 font-mono text-xs">✕</span>
-                      <span className="text-[#EEEEEE]/55"><strong className="text-[#EEEEEE]/85 font-medium">{t}:</strong> {d}</span>
+                      <span className="text-[#EEEEEE]/70"><strong className="text-[#EEEEEE]/85 font-medium">{t}:</strong> {d}</span>
                     </li>
                   ))}
                 </ul>
@@ -419,14 +425,14 @@ export default function MinecraftEc2() {
           <Reveal>
             <SectionHead num="03" title="KEY" accent="DECISIONS" />
             <div className="border border-[#F6C90E]/10">
-              <div className="hidden md:grid grid-cols-[160px_1fr_1fr] gap-4 px-5 py-3 bg-[#1E242A] font-mono text-[10px] tracking-widest text-[#F6C90E]/60">
+              <div className="hidden md:grid grid-cols-[160px_1fr_1fr] gap-4 px-5 py-3 bg-[#1E242A] font-mono text-[10px] tracking-widest text-[#F6C90E]/80">
                 <div>DECISION</div><div>CHOICE</div><div>WHY</div>
               </div>
               {DECISIONS.map((r, i) => (
                 <div key={r.d} className={`grid md:grid-cols-[160px_1fr_1fr] gap-1 md:gap-4 px-5 py-3 text-sm ${i % 2 ? 'bg-[#303841]/40' : 'bg-[#303841]/80'}`}>
                   <div className="font-display font-semibold tracking-wide text-[#EEEEEE]/85">{r.d}</div>
-                  <div className="text-[#EEEEEE]/65">{r.c}</div>
-                  <div className="text-[#EEEEEE]/40">{r.w}</div>
+                  <div className="text-[#EEEEEE]/70">{r.c}</div>
+                  <div className="text-[#EEEEEE]/70">{r.w}</div>
                 </div>
               ))}
             </div>
@@ -436,21 +442,21 @@ export default function MinecraftEc2() {
         {/* ── 04 Internals ── */}
         <Section id="internals">
           <Reveal>
-            <SectionHead num="04" title="SERVER" accent="INTERNALS"
+            <SectionHead num="04" title="SERVER" accent="INTERNALS (EC2)"
               sub="What runs inside the instance, and how the auto-stop loop decides to power it off." />
             <div className="grid lg:grid-cols-2 gap-4">
               <Panel>
                 <div className="sys-label !text-[10px] mb-1">CLOUD-INIT · FIRST BOOT</div>
                 <h3 className="font-display font-bold text-xl text-[#EEEEEE] tracking-wide mb-2">Idempotent setup script</h3>
-                <p className="text-sm text-[#EEEEEE]/45 leading-relaxed mb-5">
+                <p className="text-sm text-[#EEEEEE]/70 leading-relaxed mb-5">
                   Terraform renders a template and passes it as user_data. Every step is safe to re-run, which is why
                   replacing the instance keeps the existing world.
                 </p>
                 <ol className="space-y-2.5">
                   {BOOT_STEPS.map(([t, d], i) => (
                     <li key={t} className="grid grid-cols-[28px_1fr] gap-2 text-sm">
-                      <span className="font-mono text-[11px] text-[#F6C90E]/60 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
-                      <span><span className="text-[#EEEEEE]/85 font-medium">{t}</span> <span className="text-[#EEEEEE]/45">· {d}</span></span>
+                      <span className="font-mono text-[11px] text-[#F6C90E]/80 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+                      <span><span className="text-[#EEEEEE]/85 font-medium">{t}</span> <span className="text-[#EEEEEE]/70">· {d}</span></span>
                     </li>
                   ))}
                 </ol>
@@ -459,18 +465,18 @@ export default function MinecraftEc2() {
               <Panel>
                 <div className="sys-label !text-[10px] mb-1">MC-IDLE.TIMER · EVERY 5 MIN</div>
                 <h3 className="font-display font-bold text-xl text-[#EEEEEE] tracking-wide mb-2">The auto-stop loop</h3>
-                <p className="text-sm text-[#EEEEEE]/45 leading-relaxed mb-5">
+                <p className="text-sm text-[#EEEEEE]/70 leading-relaxed mb-5">
                   A systemd timer, a short shell script and localhost RCON keep the bill tied to actual play time.
                 </p>
                 <ol className="relative border-l border-[#F6C90E]/20 ml-1.5 space-y-5">
                   {AUTOSTOP.map((s, i) => (
-                    <li key={i} className="pl-5 relative text-sm text-[#EEEEEE]/60 leading-relaxed">
+                    <li key={i} className="pl-5 relative text-sm text-[#EEEEEE]/70 leading-relaxed">
                       <span className="absolute -left-[5px] top-1.5 w-2 h-2 bg-[#F6C90E]" style={{ clipPath: 'polygon(50% 0%,100% 50%,50% 100%,0% 50%)' }} />
                       {s}
                     </li>
                   ))}
                 </ol>
-                <div className="mt-6 border-l-2 border-[#F6C90E]/60 bg-[#F6C90E]/5 px-4 py-3 text-xs text-[#EEEEEE]/55 leading-relaxed">
+                <div className="mt-6 border-l-2 border-[#F6C90E]/60 bg-[#F6C90E]/5 px-4 py-3 text-xs text-[#EEEEEE]/70 leading-relaxed">
                   <span className="text-[#F6C90E] font-mono tracking-wider">WATCH OUT · </span>
                   If RCON breaks, the check sees zero players and powers off about 35 minutes after boot even with people
                   online. So the RCON settings must always be restored along with the world.
@@ -492,7 +498,7 @@ export default function MinecraftEc2() {
                     {g.rows.map(([k, v]) => (
                       <div key={k}>
                         <dt className="font-display font-semibold text-sm tracking-wide text-[#EEEEEE]/85">{k}</dt>
-                        <dd className="text-sm text-[#EEEEEE]/45 leading-relaxed">{v}</dd>
+                        <dd className="text-sm text-[#EEEEEE]/70 leading-relaxed">{v}</dd>
                       </div>
                     ))}
                   </dl>
@@ -513,7 +519,7 @@ export default function MinecraftEc2() {
                   <svg className="flex-shrink-0 mt-1 text-[#F6C90E]" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M6 1l4 1.5v3c0 2.5-1.7 4.3-4 5-2.3-.7-4-2.5-4-5v-3L6 1z"/><path d="M4.2 6l1.3 1.3L8 4.8" strokeLinecap="round"/></svg>
                   <div className="text-sm leading-relaxed">
                     <span className="text-[#EEEEEE]/85 font-medium">{k}</span>
-                    <span className="text-[#EEEEEE]/45"> · {v}</span>
+                    <span className="text-[#EEEEEE]/70"> · {v}</span>
                   </div>
                 </div>
               ))}
@@ -534,11 +540,11 @@ export default function MinecraftEc2() {
                     <div key={r} className="grid grid-cols-[1fr_auto] gap-x-4 pb-3 border-b border-[#F6C90E]/10 last:border-0 last:pb-0">
                       <div className="text-sm text-[#EEEEEE]/80">{r}</div>
                       <div className="font-mono text-sm text-[#F6C90E] text-right">{rate}</div>
-                      <div className="text-xs text-[#EEEEEE]/35 col-span-2">{when}</div>
+                      <div className="text-xs text-[#EEEEEE]/70 col-span-2">{when}</div>
                     </div>
                   ))}
                 </div>
-                <p className="mt-5 text-xs text-[#EEEEEE]/35 leading-relaxed">
+                <p className="mt-5 text-xs text-[#EEEEEE]/70 leading-relaxed">
                   Free: VPC, subnet, internet gateway, route table, security group, key pair, IAM role, DLM itself,
                   IAM Identity Center and the systemd timer.
                 </p>
@@ -550,7 +556,7 @@ export default function MinecraftEc2() {
                   {ESTIMATES.map(e => (
                     <div key={e.h}>
                       <div className="flex justify-between text-sm mb-1.5">
-                        <span className="text-[#EEEEEE]/70">{e.h} h / month {e.h ? <span className="text-[#EEEEEE]/30">({e.h / 30} h a day)</span> : <span className="text-[#EEEEEE]/30">(idle)</span>}</span>
+                        <span className="text-[#EEEEEE]/70">{e.h} h / month {e.h ? <span className="text-[#EEEEEE]/70">({e.h / 30} h a day)</span> : <span className="text-[#EEEEEE]/70">(idle)</span>}</span>
                         <span className="font-mono text-[#F6C90E]">${e.total.toFixed(2)}</span>
                       </div>
                       <div className="flex h-2 bg-[#F6C90E]/[0.06]" role="img"
@@ -561,11 +567,11 @@ export default function MinecraftEc2() {
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-5 mt-5 font-mono text-[10px] tracking-wide text-[#EEEEEE]/45">
+                <div className="flex gap-5 mt-5 font-mono text-[10px] tracking-wide text-[#EEEEEE]/70">
                   <span className="flex items-center gap-2"><span className="w-3 h-2 bg-[#EEEEEE]/30" /> ALWAYS-ON (DISKS)</span>
                   <span className="flex items-center gap-2"><span className="w-3 h-2 bg-[#F6C90E]" /> RUNNING TIME</span>
                 </div>
-                <p className="mt-5 text-xs text-[#EEEEEE]/35 leading-relaxed">
+                <p className="mt-5 text-xs text-[#EEEEEE]/70 leading-relaxed">
                   The $5 budget alert trips at about 65 hours of play a month. Savings Plans only pay off for servers that
                   run most of the month, so On-Demand is the right fit here.
                 </p>
@@ -583,11 +589,11 @@ export default function MinecraftEc2() {
                 <li key={p.n} className="relative pl-8 pb-8 last:pb-0">
                   <span className="absolute -left-[6px] top-1 w-3 h-3 border border-[#F6C90E] bg-[#000607]" />
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
-                    <span className="font-mono text-[11px] text-[#F6C90E]/70">PHASE {p.n}</span>
+                    <span className="font-mono text-[11px] text-[#F6C90E]/80">PHASE {p.n}</span>
                     <h3 className="font-display font-bold text-lg text-[#EEEEEE] tracking-wide">{p.t}</h3>
-                    <span className="font-mono text-[10px] text-[#EEEEEE]/30">{p.date}</span>
+                    <span className="font-mono text-[10px] text-[#EEEEEE]/70">{p.date}</span>
                   </div>
-                  <p className="text-sm text-[#EEEEEE]/50 leading-relaxed max-w-3xl">{p.d}</p>
+                  <p className="text-sm text-[#EEEEEE]/70 leading-relaxed max-w-3xl">{p.d}</p>
                 </li>
               ))}
             </ol>
@@ -609,7 +615,7 @@ export default function MinecraftEc2() {
                     </div>
                     <Status s={d.s} />
                   </div>
-                  <p className="text-sm text-[#EEEEEE]/50 leading-relaxed">{d.d}</p>
+                  <p className="text-sm text-[#EEEEEE]/70 leading-relaxed">{d.d}</p>
                 </Panel>
               ))}
             </div>
@@ -624,9 +630,9 @@ export default function MinecraftEc2() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {LESSONS.map(([t, d], i) => (
                 <div key={t} className="border border-[#F6C90E]/10 bg-[#303841]/50 p-5 hover:border-[#F6C90E]/30 transition-colors">
-                  <div className="font-mono text-[10px] text-[#F6C90E]/50 mb-2">LOG::{String(i + 1).padStart(2, '0')}</div>
+                  <div className="font-mono text-[10px] text-[#F6C90E]/80 mb-2">LOG::{String(i + 1).padStart(2, '0')}</div>
                   <h3 className="font-display font-semibold text-base text-[#EEEEEE]/90 tracking-wide mb-2 leading-snug">{t}</h3>
-                  <p className="text-xs text-[#EEEEEE]/45 leading-relaxed">{d}</p>
+                  <p className="text-xs text-[#EEEEEE]/70 leading-relaxed">{d}</p>
                 </div>
               ))}
             </div>
@@ -636,7 +642,7 @@ export default function MinecraftEc2() {
         {/* ── Outro ── */}
         <div className="py-16 border-t border-[#F6C90E]/[0.07] text-center">
           <Link to="/#projects"
-            className="relative inline-flex items-center gap-3 px-10 py-3 border border-[#F6C90E]/30 text-[#EEEEEE]/60 font-display tracking-widest text-sm hover:border-[#F6C90E]/60 hover:text-[#F6C90E] transition-all">
+            className="relative inline-flex items-center gap-3 px-10 py-3 border border-[#F6C90E]/30 text-[#EEEEEE]/70 font-display tracking-widest text-sm hover:border-[#F6C90E]/60 hover:text-[#F6C90E] transition-all">
             <div className="hud-corner tl" style={{ width: 6, height: 6 }} />
             <div className="hud-corner br" style={{ width: 6, height: 6 }} />
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6H2M6 2L2 6l4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>

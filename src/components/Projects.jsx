@@ -1,16 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
-function useInView(t = 0.1) {
-  const ref = useRef(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold: t })
-    if (ref.current) obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [t])
-  return [ref, inView]
-}
+import useInView from '../hooks/useInView'
 
 const projects = [
   { id:'001', title:'AdU-Cats: Web Adoption System', category:'FULLSTACK', desc:'A Dedicated website for Aducats Organization focusing on streamlining cat adoptions. With AI-Powered breed prediction', tech:['Laravel','Vite','MySQL','Hostinger','Vanilla JS', 'Tailwind'], accent:'#F6C90E' },
@@ -31,7 +21,7 @@ function Card({ p, i, inView }) {
         <div className="hud-corner br" />
 
         <div className="flex items-start justify-between mb-4">
-          <span className="font-mono text-[10px] text-[#EEEEEE]/30">PRJ::{p.id}</span>
+          <span className="font-mono text-[10px] text-[#EEEEEE]/70">PRJ::{p.id}</span>
           <span className="font-mono text-[10px] px-2 py-0.5 border"
             style={{ borderColor: `${p.accent}30`, color: p.accent }}>
             {p.category}
@@ -45,11 +35,11 @@ function Card({ p, i, inView }) {
           <div className="h-full transition-all duration-500" style={{ background: p.accent, width: hov ? '100%' : '0%' }} />
         </div>
 
-        <p className="text-[#EEEEEE]/45 text-sm leading-relaxed mb-6">{p.desc}</p>
+        <p className="text-[#EEEEEE]/70 text-sm leading-relaxed mb-6">{p.desc}</p>
 
         <div className="flex flex-wrap gap-2 mb-6">
           {p.tech.map(t => (
-            <span key={t} className="font-mono text-[10px] px-2 py-0.5 bg-[#3A4750] text-[#EEEEEE]/50 border border-[#EEEEEE]/8">{t}</span>
+            <span key={t} className="font-mono text-[10px] px-2 py-0.5 bg-[#3A4750] text-[#EEEEEE]/70 border border-[#EEEEEE]/8">{t}</span>
           ))}
         </div>
 
@@ -60,21 +50,16 @@ function Card({ p, i, inView }) {
               VIEW DETAILS
             </Link>
           ) : (
-            <a href="#" className="flex items-center gap-1.5 text-[#EEEEEE]/40 hover:text-[#EEEEEE] transition-colors font-display text-xs tracking-wider">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            <span className="flex items-center gap-1.5 text-[#EEEEEE]/70 font-display text-xs tracking-wider">
               DEMO NO LONGER AVAILABLE
-            </a>
+            </span>
           )}
           {p.privateRepo && (
-            <span className="flex items-center gap-1.5 text-[#EEEEEE]/25 font-mono text-[10px] tracking-wider">
+            <span className="flex items-center gap-1.5 text-[#EEEEEE]/70 font-mono text-[10px] tracking-wider">
               <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2"><rect x="2.5" y="5.5" width="7" height="5" /><path d="M4 5.5V4a2 2 0 014 0v1.5" /></svg>
               PRIVATE REPO
             </span>
           )}
-          {/* <a href="#" className="flex items-center gap-1.5 text-[#EEEEEE]/40 hover:text-[#EEEEEE] transition-colors font-display text-xs tracking-wider">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.24 1 1 3.24 1 6c0 2.21 1.43 4.08 3.41 4.75-.05-.42-.09-1.07.02-1.53l.66-2.78s-.17-.34-.17-.83c0-.78.45-1.36.99-1.36.47 0 .69.35.69.78 0 .47-.3 1.18-.46 1.84-.13.55.28 1 .82 1 .98 0 1.64-1.04 1.64-2.54 0-1.33-.95-2.26-2.32-2.26-1.58 0-2.5 1.18-2.5 2.4 0 .48.18.99.41 1.27a.16.16 0 01.04.16l-.15.62c-.02.1-.08.12-.17.07-.7-.33-1.14-1.35-1.14-2.17 0-1.76 1.28-3.38 3.7-3.38 1.94 0 3.45 1.38 3.45 3.23 0 1.93-1.21 3.48-2.9 3.48-.57 0-1.1-.3-1.28-.64l-.35 1.29c-.13.49-.47 1.1-.7 1.47A5 5 0 106 1z" fill="currentColor"/></svg>
-            SOURCE
-          </a> */}
         </div>
       </div>
     </div>
@@ -82,7 +67,7 @@ function Card({ p, i, inView }) {
 }
 
 export default function Projects() {
-  const [ref, inView] = useInView()
+  const [ref, inView] = useInView(0.1)
   const [filter, setFilter] = useState('ALL')
   const filtered = filter === 'ALL' ? projects : projects.filter(p => p.category === filter)
 
@@ -91,7 +76,7 @@ export default function Projects() {
       <div ref={ref} className="max-w-6xl mx-auto px-8 lg:px-16">
         <div className={`mb-12 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="flex items-center gap-4 mb-4">
-            <div className="sys-label text-[#F6C90E]/50">SECTION::03 /////</div>
+            <div className="sys-label text-[#F6C90E]/80">SECTION::03 /////</div>
             <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/25 to-transparent" />
           </div>
           <h2 className="font-display font-black text-[clamp(2.5rem,6vw,5rem)] text-[#EEEEEE] tracking-tight leading-none mb-6">
@@ -99,8 +84,8 @@ export default function Projects() {
           </h2>
           <div className="flex flex-wrap gap-2">
             {['ALL', ...new Set(projects.map(p => p.category))].map(cat => (
-              <button key={cat} onClick={() => setFilter(cat)}
-                className={`font-display text-xs tracking-widest px-3 py-1.5 border transition-all ${filter === cat ? 'border-[#F6C90E] text-[#F6C90E] bg-[#F6C90E]/5' : 'border-[#F6C90E]/20 text-[#EEEEEE]/45 hover:border-[#F6C90E]/40 hover:text-[#EEEEEE]/70'}`}>
+              <button key={cat} type="button" onClick={() => setFilter(cat)} aria-pressed={filter === cat}
+                className={`font-display text-xs tracking-widest px-3 py-1.5 border transition-all ${filter === cat ? 'border-[#F6C90E] text-[#F6C90E] bg-[#F6C90E]/5' : 'border-[#F6C90E]/20 text-[#EEEEEE]/70 hover:border-[#F6C90E]/40 hover:text-[#EEEEEE]/70'}`}>
                 {cat}
               </button>
             ))}
@@ -112,7 +97,7 @@ export default function Projects() {
         </div>
 
         <div className={`mt-12 text-center transition-all duration-700 delay-500 ${inView ? 'opacity-100' : 'opacity-0'}`}>
-          <button className="relative px-10 py-3 border border-[#F6C90E]/25 text-[#EEEEEE]/50 font-display tracking-widest text-sm hover:border-[#F6C90E]/50 hover:text-[#F6C90E] transition-all">
+          <button className="relative px-10 py-3 border border-[#F6C90E]/25 text-[#EEEEEE]/70 font-display tracking-widest text-sm hover:border-[#F6C90E]/50 hover:text-[#F6C90E] transition-all">
             <div className="hud-corner tl" style={{ width: 6, height: 6 }} />
             <div className="hud-corner br" style={{ width: 6, height: 6 }} />
             LOAD MORE PROJECTS

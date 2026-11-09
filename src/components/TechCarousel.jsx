@@ -22,7 +22,7 @@ const TECH = [
   {
     name: 'C#',
     color: '#9B4F96',
-    imgSrc: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg',
+    imgSrc: '/icons/csharp.svg',
     icon: null,
   },
   {
@@ -37,7 +37,7 @@ const TECH = [
   {
     name: 'MySQL',
     color: '#4479A1',
-    imgSrc: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg',
+    imgSrc: '/icons/mysql.svg',
     icon: null,
   },
   {
@@ -51,105 +51,50 @@ const TECH = [
   },
 ]
 
+// The track holds this many identical copies and slides by exactly one copy per loop.
+// Keep it in sync with the translateX in the marquee-scroll keyframes (100% / COPIES).
+const COPIES = 4
+
 export default function TechCarousel() {
   const [paused, setPaused] = useState(false)
 
   return (
-    <>
-      {/* Inject keyframe directly — guaranteed to work regardless of Tailwind purging */}
-      <style>{`
-        @keyframes marquee-scroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-25%); }
-        }
-      `}</style>
-
-      <section className="py-24 relative overflow-hidden">
-        {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, #3A4750 0%, transparent 80%)' }} />
-        <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(270deg, #3A4750 0%, transparent 80%)' }} />
-
-        {/* Header */}
-        <div className="px-8 lg:px-16 mb-10">
-          <div className="flex items-center gap-4">
-            <div className="sys-label text-[#F6C90E]/60">TECH STACK</div>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/20 to-transparent" />
-            <span className="font-mono text-[10px] text-[#F6C90E]/30 pr-4">HOVER TO PAUSE</span>
-          </div>
+    <section aria-label="Tech stack" className="py-24 relative overflow-hidden">
+      {/* Header */}
+      <div className="px-8 lg:px-16 mb-10">
+        <div className="flex items-center gap-4">
+          <div className="sys-label text-[#F6C90E]/80">TECH STACK</div>
+          <div className="flex-1 h-px bg-gradient-to-r from-[#F6C90E]/20 to-transparent" />
+          {/* Hovering also pauses, but keyboard and touch users need a real control. */}
+          <button type="button" onClick={() => setPaused(p => !p)} aria-pressed={paused}
+            className="font-mono text-[10px] text-[#F6C90E]/80 hover:text-[#F6C90E] transition-colors tracking-wider px-2 py-1">
+            {paused ? 'RESUME' : 'PAUSE'}
+          </button>
         </div>
+      </div>
 
-        {/* Single track with items duplicated — animates -50% for a seamless loop */}
-        <div style={{ overflow: 'hidden', width: '100%' }}>
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-              width: 'max-content',
-              animation: 'marquee-scroll 22s linear infinite',
-              animationPlayState: paused ? 'paused' : 'running',
-              willChange: 'transform',
-            }}
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            {[...TECH, ...TECH, ...TECH, ...TECH].map((tech, i) => (
-              <Pill key={i} tech={tech} />
-            ))}
-          </div>
+      <div className="marquee">
+        <div className={`marquee-track ${paused ? 'paused' : ''}`}>
+          {Array.from({ length: COPIES }, (_, copy) =>
+            TECH.map(tech => <Pill key={`${copy}-${tech.name}`} tech={tech} duplicate={copy > 0} />)
+          )}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }
 
-function Pill({ tech }) {
-  const [hov, setHov] = useState(false)
+function Pill({ tech, duplicate }) {
   return (
     <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '14px',
-        padding: '16px 28px',
-        border: 'none',
-        background: hov ? `${tech.color}0D` : 'transparent',
-        whiteSpace: 'nowrap',
-        cursor: 'default',
-        transition: 'border-color 0.25s, background 0.25s, box-shadow 0.25s',
-        boxShadow: hov
-          ? `0 0 22px ${tech.color}44, inset 0 0 16px ${tech.color}11`
-          : 'none',
-        flexShrink: 0,
-      }}
+      className={`tech-pill ${duplicate ? 'tech-pill-duplicate' : ''}`}
+      style={{ '--tech-color': tech.color }}
+      aria-hidden={duplicate || undefined}
     >
-      {tech.imgSrc ? (
-        <img
-          src={tech.imgSrc}
-          width="36"
-          height="36"
-          alt={tech.name}
-          style={{ opacity: hov ? 1 : 0.65, transition: 'opacity 0.25s', display: 'block' }}
-        />
-      ) : (
-        <span style={{ color: hov ? tech.color : tech.color + 'AA', transition: 'color 0.25s', display: 'flex' }}>
-          {tech.icon}
-        </span>
-      )}
-      <span style={{
-        fontFamily: "'Barlow Condensed', sans-serif",
-        fontWeight: 700,
-        fontSize: '1.15rem',
-        letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-        color: hov ? '#EEEEEE' : 'rgba(238,238,238,0.6)',
-        transition: 'color 0.25s',
-      }}>
-        {tech.name}
-      </span>
+      {tech.imgSrc
+        ? <img src={tech.imgSrc} width="36" height="36" alt="" className="tech-pill-img" />
+        : <span className="tech-pill-icon" aria-hidden="true">{tech.icon}</span>}
+      <span className="tech-pill-name">{tech.name}</span>
     </div>
   )
 }

@@ -1,47 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
+// Writes straight to the DOM: storing the position in state would re-render on every mouse move.
 export default function Cursor() {
-  const [pos, setPos] = useState({ x: -100, y: -100 })
-  const [ring, setRing] = useState({ x: -100, y: -100 })
-  const [hovering, setHovering] = useState(false)
+  const dotRef = useRef(null)
 
   useEffect(() => {
-    let ringX = -100, ringY = -100
-    let animFrame
+    // Touch screens have no pointer to follow, so they keep the browser defaults.
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    const root = document.documentElement
+    root.classList.add('custom-cursor')
 
     const onMove = (e) => {
-      setPos({ x: e.clientX, y: e.clientY })
+      const dot = dotRef.current
+      dot.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`
+      dot.style.opacity = '1'
     }
-
-    const animate = () => {
-      ringX += (pos.x - ringX) * 0.12
-      ringY += (pos.y - ringY) * 0.12
-      setRing({ x: ringX, y: ringY })
-      animFrame = requestAnimationFrame(animate)
-    }
-
-    const onEnter = (e) => {
-      if (e.target.closest('a, button, [data-hover]')) setHovering(true)
-    }
-    const onLeave = () => setHovering(false)
-
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseover', onEnter)
-    window.addEventListener('mouseout', onLeave)
-    animFrame = requestAnimationFrame(animate)
+    window.addEventListener('mousemove', onMove, { passive: true })
 
     return () => {
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseover', onEnter)
-      window.removeEventListener('mouseout', onLeave)
-      cancelAnimationFrame(animFrame)
+      root.classList.remove('custom-cursor')
     }
-  }, [pos.x, pos.y])
+  }, [])
 
-  return (
-    <>
-      <div className="cursor-dot" style={{ left: pos.x, top: pos.y }} />
-      {/* <div className={`cursor-ring ${hovering ? 'hovering' : ''}`} style={{ left: ring.x, top: ring.y }} /> */}
-    </>
-  )
+  return <div ref={dotRef} className="cursor-dot" aria-hidden="true" />
 }

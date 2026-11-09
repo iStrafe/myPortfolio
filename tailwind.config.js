@@ -22,9 +22,7 @@ export default {
       animation: {
         'scan':       'scan 10s linear infinite',
         'pulse-y':    'pulseY 2s ease-in-out infinite',
-        'fade-up':    'fadeUp 0.6s ease forwards',
         'grid-drift': 'gridDrift 20s linear infinite',
-        'marquee':    'marquee 28s linear infinite',
       },
       keyframes: {
         scan: {
@@ -35,17 +33,10 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%':      { opacity: '0.4' },
         },
-        fadeUp: {
-          from: { opacity: '0', transform: 'translateY(30px)' },
-          to:   { opacity: '1', transform: 'translateY(0)' },
-        },
+        // Moves a layer rather than background-position so the GPU can animate it without repainting.
         gridDrift: {
-          '0%':   { backgroundPosition: '0 0' },
-          '100%': { backgroundPosition: '80px 80px' },
-        },
-        marquee: {
-          '0%':   { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' },
+          '0%':   { transform: 'translate(0, 0)' },
+          '100%': { transform: 'translate(80px, 80px)' },
         },
       },
     },
